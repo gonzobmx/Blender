@@ -1,0 +1,44 @@
+import bpy
+import os
+
+# Function to export a collection as an FBX file
+def export_collection_as_fbx(collection):
+    # Create the filepath using the collection name
+    collection_name = collection.name
+    path = "C:/Users/ your path should be here /"
+    filename = collection_name + ".fbx"
+    filepath = os.path.join(path, filename)
+    
+    # Make all objects in the collection selectable
+    for obj in collection.objects:
+        obj.select_set(True)
+    
+    # Set FBX export options and export the collection
+    bpy.ops.export_scene.fbx(
+        filepath=filepath,
+        use_selection=True, 
+        object_types={'MESH', 'ARMATURE'}  # Adjust according to your needs
+    )
+    
+    # Deselect objects after export
+    for obj in collection.objects:
+        obj.select_set(False)
+    
+    print(f"Collection '{collection_name}' exported to {filepath}")
+
+# Main function to export all selected collections
+def export_all_selected_collections():
+    # Get all selected collections
+    selected_collections = [layer.collection for layer in bpy.context.view_layer.layer_collection.children if layer.collection.objects]
+    
+    # Check if any collection is selected
+    if not selected_collections:
+        print("No collections selected.")
+        return
+    
+    # Loop through each selected collection and export it
+    for collection in selected_collections:
+        export_collection_as_fbx(collection)
+
+# Call the main function to export all selected collections
+export_all_selected_collections()
